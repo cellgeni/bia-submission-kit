@@ -1,0 +1,131 @@
+Submission	
+Template	BioImages.v5
+Title	SYNTHETIC EXAMPLE - Light-sheet imaging of cleared mouse brain slices (fictional study)
+ReleaseDate	2099-01-01
+AttachTo	BioImages
+
+Study	study-0-eccs
+Title	SYNTHETIC EXAMPLE - Light-sheet imaging of cleared mouse brain slices (fictional study)
+ReleaseDate	2099-01-01
+Description	This is a fictional study used to demonstrate the bia-submission-kit. It does not describe real data. Two mice contribute two cleared brain slices each, imaged with one light-sheet setup and processed with one segmentation pipeline.
+Keywords	light-sheet microscopy
+Keywords	tissue clearing
+Keywords	mouse brain
+Keywords	example
+Acknowledgements	Fictional imaging facility.
+License	CC BY 4.0
+[URL]	https://creativecommons.org/licenses/by/4.0/legalcode
+Funding statement	Fictional work funded by the Example Funding Agency (grant EX-0001).
+
+Link	https://example.org/fictional-viewer
+Description	Interactive viewer (fictional)
+
+Publication	publ-1-j9l8	study-0-eccs
+Pubmed ID	
+Title	Toward a Unified Theory of High-Energy Metaphysics: Silly String Theory
+Authors	Josiah Carberry
+DOI	10.5555/12345678
+Year	2008
+
+Funding	fund-1-hwrj	study-0-eccs
+Agency	Example Funding Agency
+grant_id	EX-0001
+
+Biosample	bios-1-5vgr	study-0-eccs
+Title	MOUSE-01
+Organism	Mus musculus
+[Ontology]	NCBITaxon
+[TermId]	NCBITaxon_10090
+Description	"Age (weeks): 12
+Sex: female"
+Biological entity	Adult mouse brain
+Experimental variable	None (example)
+
+Biosample	bios-2-jwur	study-0-eccs
+Title	MOUSE-02
+Organism	Mus musculus
+[Ontology]	NCBITaxon
+[TermId]	NCBITaxon_10090
+Description	"Age (weeks): 14
+Sex: male"
+Biological entity	Adult mouse brain
+Experimental variable	None (example)
+
+Specimen	spec-1-q562	study-0-eccs
+Title	MOUSE-01-SL01
+Sample preparation protocol	SYNTHETIC EXAMPLE. Brains were fixed by immersion in 4% paraformaldehyde for 24 h, cut into 300 µm coronal slices on a vibratome, cleared with a hydrogel-based clearing protocol and stained with a nuclear dye. Slices were mounted in refractive-index-matched medium.
+
+Specimen	spec-2-hmsa	study-0-eccs
+Title	MOUSE-01-SL02
+Sample preparation protocol	SYNTHETIC EXAMPLE. Brains were fixed by immersion in 4% paraformaldehyde for 24 h, cut into 300 µm coronal slices on a vibratome, cleared with a hydrogel-based clearing protocol and stained with a nuclear dye. Slices were mounted in refractive-index-matched medium.
+
+Specimen	spec-3-cvcv	study-0-eccs
+Title	MOUSE-02-SL01
+Sample preparation protocol	SYNTHETIC EXAMPLE. Brains were fixed by immersion in 4% paraformaldehyde for 24 h, cut into 300 µm coronal slices on a vibratome, cleared with a hydrogel-based clearing protocol and stained with a nuclear dye. Slices were mounted in refractive-index-matched medium.
+
+Specimen	spec-4-zdjj	study-0-eccs
+Title	MOUSE-02-SL02
+Sample preparation protocol	SYNTHETIC EXAMPLE. Brains were fixed by immersion in 4% paraformaldehyde for 24 h, cut into 300 µm coronal slices on a vibratome, cleared with a hydrogel-based clearing protocol and stained with a nuclear dye. Slices were mounted in refractive-index-matched medium.
+
+Image acquisition	imag-1-mld9	study-0-eccs
+Title	Light-sheet volume
+Imaging instrument	Light-sheet microscope (fictional model)
+Image acquisition parameters	SYNTHETIC EXAMPLE. 10x detection objective, 0.65 µm lateral pixel size, 2 µm z-step, one channel (nuclear stain), tiled acquisition.
+Imaging method	selective plane illumination fluorescence microscopy
+[Ontology]	fbbi
+[TermId]	FBbi_00000369
+
+Image analysis	imag-1-6myx	study-0-eccs
+Title	Nuclei segmentation v1
+Image analysis overview	SYNTHETIC EXAMPLE. Tiles were stitched and nuclei segmented in 3D.
+
+Study Component	stud-1-9gvj	study-0-eccs
+Name	Light-sheet volumes
+Description	Stitched volumes and segmentation masks.
+File List	file_list.tsv
+
+Associations		stud-1-9gvj
+Biosample	MOUSE-01
+Specimen	MOUSE-01-SL01
+Image acquisition	Light-sheet volume
+Image analysis	Nuclei segmentation v1
+Image correlation	
+
+Associations		stud-1-9gvj
+Biosample	MOUSE-01
+Specimen	MOUSE-01-SL02
+Image acquisition	Light-sheet volume
+Image analysis	Nuclei segmentation v1
+Image correlation	
+
+Associations		stud-1-9gvj
+Biosample	MOUSE-02
+Specimen	MOUSE-02-SL01
+Image acquisition	Light-sheet volume
+Image analysis	Nuclei segmentation v1
+Image correlation	
+
+Associations		stud-1-9gvj
+Biosample	MOUSE-02
+Specimen	MOUSE-02-SL02
+Image acquisition	Light-sheet volume
+Image analysis	Nuclei segmentation v1
+Image correlation	
+
+Author		study-0-eccs
+Name	Josiah Carberry
+E-mail	josiah.carberry@example.org
+ORCID	0000-0002-1825-0097
+<affiliation>	inst1
+Role	submitter
+Role	corresponding author
+
+Author		study-0-eccs
+Name	Example Researcher
+E-mail	researcher@example.org
+ORCID	
+<affiliation>	inst1
+Role	first author
+
+organisation	inst1	study-0-eccs
+Name	Example Institute of Imaging (fictional)

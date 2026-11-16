@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BioImage Archive submission form</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#1d2330; --muted:#667085; --border:#d9dde5; --accent:#2f6fde;
+          --err:#c62828; --warn:#a15c00; --info:#2e7d32; --req:#e65100; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         color:var(--fg); background:var(--bg); }
+  header { position:sticky; top:0; z-index:20; display:flex; gap:8px; align-items:center; padding:10px 16px;
+           background:#fff; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  header h1 { font-size:16px; margin:0 10px 0 0; }
+  button, .btn { font:inherit; padding:6px 11px; border:1px solid var(--border); border-radius:6px; background:#fff;
+                 cursor:pointer; color:var(--fg); }
+  button:hover, .btn:hover { border-color:#b7bfcc; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  #status { margin-left:auto; color:var(--muted); font-size:12px; }
+  #site-links { display:flex; gap:12px; align-items:center; margin-right:8px; font-size:13px; }
+  #site-links a { color:var(--accent); text-decoration:none; cursor:pointer; } #site-links a:hover { text-decoration:underline; }
+  .layout { display:grid; grid-template-columns:230px minmax(0,1fr); min-height:calc(100vh - 54px); }
+  nav { border-right:1px solid var(--border); background:#fff; padding:8px 0; }
+  nav a { display:flex; align-items:center; gap:4px; padding:7px 14px; color:var(--fg); text-decoration:none; cursor:pointer; }
+  nav a span.lbl { flex:1; }
+  nav a.active { background:#eaf1ff; font-weight:600; }
+  nav .sep { border-top:1px solid var(--border); margin:6px 0; }
+  .badge { font-size:11px; border-radius:9px; padding:0 6px; line-height:17px; }
+  .b-err { background:#fde8e8; color:var(--err); } .b-warn { background:#fff1db; color:var(--warn); }
+  .b-n { color:var(--muted); }
+  main { padding:18px 22px 80px; overflow:auto; }
+  h2 { margin:0 0 4px; font-size:19px; } .lead { color:var(--muted); margin:0 0 14px; }
+  .field { margin-bottom:13px; max-width:980px; } .field > label { display:block; font-weight:600; margin-bottom:3px; }
+  .req::after { content:" *"; color:var(--req); }
+  .help { color:var(--muted); font-size:12px; margin-top:2px; }
+  input[type=text], input[type=date], textarea, select { font:inherit; width:100%; padding:5px 7px;
+      border:1px solid var(--border); border-radius:5px; background:#fff; color:var(--fg); }
+  textarea { resize:vertical; }
+  .gridwrap { overflow:auto; max-height:70vh; border:1px solid var(--border); border-radius:6px; background:#fff; }
+  table.grid { border-collapse:collapse; min-width:100%; }
+  .grid th, .grid td { border-bottom:1px solid var(--border); border-right:1px solid #eef0f4; padding:2px; vertical-align:top; }
+  .grid th { background:#f0f2f6; text-align:left; font-size:12px; position:sticky; top:0; z-index:2; padding:6px; white-space:nowrap; vertical-align:top; }
+  .grid td.num { color:var(--muted); font-size:12px; padding:6px; text-align:right; }
+  .grid td input, .grid td select, .grid td textarea { border:1px solid transparent; padding:4px 5px; min-width:110px; }
+  .grid td input:focus, .grid td select:focus, .grid td textarea:focus { border-color:var(--accent); outline:none; }
+  tr.row-err td { background:#ffe9e9; } tr.row-warn td { background:#fff1d6; }
+  tr.row-err td.num { box-shadow:inset 3px 0 0 var(--err); } tr.row-warn td.num { box-shadow:inset 3px 0 0 #e0a84a; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:12px 14px 4px; margin-bottom:12px; max-width:1000px; }
+  .card.row-err { border-color:var(--err); } .card.row-warn { border-color:#e0a84a; }
+  .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; color:var(--muted); font-size:12px; }
+  .toolbar { display:flex; gap:8px; align-items:center; margin:10px 0; flex-wrap:wrap; }
+  .toolbar select { width:auto; }
+  .grid td input[type=checkbox] { min-width:0; width:auto; margin:0; }
+  .chips { display:flex; flex-wrap:wrap; gap:2px 12px; padding:4px 5px; min-width:170px; }
+  .chips label { display:inline-flex; gap:4px; align-items:center; white-space:nowrap; font-size:13px; }
+  .chips input[type=text] { width:110px; min-width:0; padding:2px 4px; font-size:12px; border:1px solid var(--border); }
+  .issues { list-style:none; padding:0; margin:6px 0 14px; max-width:1000px; }
+  .issues li { margin:2px 0; padding:4px 8px; border-radius:5px; cursor:pointer; background:#fff; border:1px solid var(--border); }
+  .issues li:hover { border-color:#b7bfcc; }
+  .lvl { font-weight:700; font-size:11px; margin-right:6px; }
+  .lvl-ERROR { color:var(--err); } .lvl-WARN { color:var(--warn); } .lvl-INFO { color:var(--info); }
+  pre.tsv { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px; max-height:460px; overflow:auto; font-size:12px; white-space:pre; }
+  .x { color:var(--muted); border:none; background:none; padding:2px 6px; }
+  .x:hover { color:var(--err); }
+  .panel { background:#fff; border:1px dashed var(--border); border-radius:8px; padding:10px; margin:8px 0; max-width:700px; }
+  .lookup { position:relative; }
+  .lookup-results { position:absolute; z-index:30; left:0; right:0; background:#fff; border:1px solid var(--border);
+                    border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,.1); max-height:240px; overflow:auto; min-width:260px; }
+  .lookup-results div { padding:5px 8px; cursor:pointer; } .lookup-results div:hover { background:#eaf1ff; }
+  .lookup-results small { color:var(--muted); }
+  .summary { display:flex; gap:12px; flex-wrap:wrap; margin:8px 0 16px; }
+  .summary div { background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 14px; }
+  .summary b { display:block; font-size:20px; }
+  footer.note { color:var(--muted); font-size:12px; margin-top:28px; max-width:900px; }
+  details summary { cursor:pointer; color:var(--muted); margin:8px 0; }
+  .descname { display:flex; gap:2px; align-items:center; }
+  .colhelp { font-weight:400; color:var(--muted); font-size:11px; line-height:1.3; white-space:normal; margin-top:3px; min-width:150px; max-width:320px; }
+  .guide { background:#fff; border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:8px; padding:8px 14px; margin:0 0 16px; max-width:980px; }
+  .guide ol { margin:6px 0; padding-left:20px; } .guide li { margin:3px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>BioImage Archive submission</h1>
+  <span id="site-links"></span>
+  <button id="btn-new" title="Start an empty submission">New</button>
+  <label class="btn" title="Load a PageTab TSV exported from the BioStudies submission tool">Import PageTab TSV<input type="file" id="in-tsv" accept=".tsv,.txt" hidden></label>
+  <label class="btn" title="Load a bia_kit Excel workbook">Open Excel<input type="file" id="in-xlsx" accept=".xlsx" hidden></label>
+  <label class="btn" title="Load a draft saved from this form">Open draft<input type="file" id="in-json" accept=".json" hidden></label>
+  <button id="btn-save" title="Download a draft (.json) you can reopen or send to a colleague">Save draft</button>
+  <button id="btn-xlsx" title="Download as a bia_kit Excel workbook">Export Excel</button>
+  <button id="btn-tsv" class="primary" title="Validate and download the PageTab TSV">Download PageTab TSV</button>
+  <span id="status">Loading Python runtime…</span>
+</header>
+<div class="layout"><nav id="nav"></nav><main id="main"></main></div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
+<script>
+"use strict";
+const BIA_KIT_SRC = /*__BIA_KIT_PY__*/"";
+const SITE_LINKS = /*__SITE_LINKS__*/null;   // set when built as a website (guide, template, example)
+const STORAGE_KEY = "bia-kit-draft-v1";
+const ROLE_OPTIONS = ["submitter", "first author", "corresponding author", "principal investigator"];
+const CARD_SHEETS = new Set(["Protocols", "Acquisitions", "Analyses", "Correlations", "StudyComponents"]);
+const ADVANCED_STUDY = new Set(["Accession", "Template", "DOI", "AttachTo"]);
+const TABS = [
+  ["Study", "Study", "General information about the dataset: what it is, when it becomes public, how it may be reused and how it was funded."],
+  ["Organisations", "Organisations", "The institutions the authors belong to. Define each one once; authors are linked to them on the next page."],
+  ["Authors", "Authors", "Everyone who should be credited, including the person submitting. Tick each person's roles and organisations."],
+  ["Links", "Links", "Web resources related to the data, such as code or an interactive viewer."],
+  ["Publications", "Publications", "Articles that describe the data. Can be added later, before the release date."],
+  ["Grants", "Grants", "Each grant that funded the work, as funding organisation plus grant number."],
+  "-",
+  ["Biosamples", "Biosamples", "One row per biological source of material. For a fact that every sample has but that has no column of its own, add a descriptor column: its values are written into each sample's description as 'label: value' lines."],
+  ["Protocols", "Sample preparation", "Each distinct way specimens were prepared for imaging, written once. Specimens choose one by its name."],
+  ["Acquisitions", "Image acquisition", "Each distinct imaging setup (instrument, method and settings), written once."],
+  ["Analyses", "Image analysis", "Each distinct processing or analysis procedure, written once. Use separate entries for different software versions."],
+  ["Correlations", "Image correlation", "Only needed when images from different modalities or time points were registered to each other."],
+  ["StudyComponents", "Study components", "Groups of data that are described together. Each group is accompanied by one file list that you upload with the data."],
+  ["Specimens", "Specimens", "One row per imaged specimen. Each row links the specimen to its biosample, preparation, imaging, analysis and study component."],
+  "-",
+  ["Review", "Review & export", "Remaining issues, a preview of the submission file, and the download."],
+];
+
+let py = null, schema = null, xlsxReady = false;
+let state = null, result = null, current = "Study";
+let validateTimer = null, saveTimer = null;
+
+// ------------------------------------------------------------------ utils
+const $ = (sel, root = document) => root.querySelector(sel);
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === undefined || v === null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "value") e.value = v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+}
+const setStatus = (t) => { $("#status").textContent = t; };
+const splitMulti = (s) => (s || "").split(/[;\n]/).map(x => x.trim()).filter(Boolean);
+function download(name, data, type) {
+  const url = URL.createObjectURL(new Blob([data], { type }));
+  const a = el("a", { href: url, download: name }); document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+function emptyState() {
+  const tables = {}; for (const k of Object.keys(schema.tables)) tables[k] = [];
+  return { study: Object.assign({}, schema.template_defaults || {}), tables, desc_labels: [] };
+}
+function columns(sheet) {
+  const cols = schema.tables[sheet].slice();
+  if (sheet === "Biosamples") {
+    const at = cols.findIndex(c => c.header === "_accno");
+    cols.splice(at, 0, ...state.desc_labels.map(h => ({ header: h, required: false, wrap: false, desc: true, ref: "",
+      help: (schema.desc_help || "").replace("<label>", h.slice(schema.desc_prefix.length)) })));
+  }
+  return cols.filter(c => !c.header.startsWith("_"));
+}
+const keyOf = (sheet) => schema.tables[sheet][0].header;
+const refOptions = (sheet) => [...new Set(state.tables[sheet].map(r => (r[keyOf(sheet)] || "").trim()).filter(Boolean))];
+function payload(extra = {}) { return JSON.stringify({ study: state.study, tables: state.tables, desc_labels: state.desc_labels, ...extra }); }
+
+// ------------------------------------------------------------------ python bridge
+function fatal(title, detail) {
+  setStatus(title);
+  const main = $("#main"); main.innerHTML = "";
+  main.append(el("h2", {}, title), el("div", { class: "panel" }, ...detail.map(d => el("p", {}, d))));
+}
+async function boot() {
+  let src = BIA_KIT_SRC;
+  if (!src && location.protocol !== "file:") {   // unbuilt source template served over http: load the module next to it
+    try { const r = await fetch("../bia_kit.py"); if (r.ok) src = await r.text(); } catch (e) { /* file:// */ }
+  }
+  if (!src || src.indexOf("def api_schema") < 0) {
+    fatal("This is the source of the form, not the form itself", [
+      "Use the hosted form on the project's website, or build a local copy with:  python3 web/build_web.py",
+      "and open dist/bia-submission-form.html."]);
+    return;
+  }
+  if (typeof loadPyodide !== "function") {
+    fatal("The Python runtime could not be downloaded", [
+      "The form loads its Python engine (Pyodide) from cdn.jsdelivr.net when it opens. Check the internet connection, "
+      + "content blockers or a network policy that blocks this site, then reload the page."]);
+    return;
+  }
+  try {
+    py = await loadPyodide();
+    py.FS.writeFile("/home/pyodide/bia_kit.py", src);
+    py.runPython("import sys; sys.path.insert(0, '/home/pyodide'); import bia_kit");
+    schema = JSON.parse(py.runPython("bia_kit.api_schema()"));
+  } catch (e) {
+    console.error(e);
+    fatal("The form could not start", ["Starting the Python engine failed with:", String(e).slice(0, 1500),
+      "Reload the page. If this keeps happening, use the command-line tool or the Excel workbook instead."]);
+    return;
+  }
+  state = loadLocal() || emptyState();
+  renderNav(); go(current); validateNow();
+  setStatus(`Ready · bia_kit ${schema.version} · runs in your browser, nothing is uploaded`);
+}
+function callPy(fn, ...args) {
+  const f = py.globals.get("bia_kit")[fn];
+  return f(...args);
+}
+async function ensureXlsx() {
+  if (xlsxReady) return;
+  setStatus("Loading Excel support (openpyxl)…");
+  await py.loadPackage("micropip");
+  await py.runPythonAsync("import micropip\nawait micropip.install('openpyxl')");
+  xlsxReady = true; setStatus("Excel support loaded");
+}
+
+// ------------------------------------------------------------------ persistence + validation
+function loadLocal() { try { const s = localStorage.getItem(STORAGE_KEY); return s ? normalise(JSON.parse(s)) : null; } catch (e) { return null; } }
+function saveLocal() { try { localStorage.setItem(STORAGE_KEY, payload()); } catch (e) { /* storage unavailable */ } }
+function normalise(d) {
+  const s = emptyState();
+  s.study = Object.assign({}, d.study || {});
+  for (const k of Object.keys(s.tables)) s.tables[k] = ((d.tables || {})[k] || []).map(r => Object.assign({}, r));
+  s.desc_labels = (d.desc_labels || []).slice();
+  return s;
+}
+function changed() {
+  clearTimeout(validateTimer); validateTimer = setTimeout(validateNow, 500);
+  clearTimeout(saveTimer); saveTimer = setTimeout(saveLocal, 800);
+}
+function validateNow(extra = {}) {
+  if (!py) return null;
+  try { result = JSON.parse(callPy("api_build", payload(extra))); }
+  catch (e) { result = { tsv: "", issues: [["ERROR", "Python", String(e)]], errors: 1, warnings: 0, notes: 0 }; console.error(e); }
+  decorate();
+  return result;
+}
+function issuesBySheet() {
+  const m = {};
+  for (const [lvl, where, msg] of (result ? result.issues : [])) {
+    const mm = /^(\w+)(?: row (\d+))?/.exec(where) || [];
+    const sheet = mm[1] || "Review";
+    (m[sheet] = m[sheet] || []).push({ lvl, where, msg, row: mm[2] ? +mm[2] : null, sheet });
+  }
+  return m;
+}
+function decorate() {
+  const by = issuesBySheet();
+  for (const a of document.querySelectorAll("nav a[data-tab]")) {
+    const t = a.dataset.tab, list = by[t] || [], b = a.querySelector(".badges"); b.innerHTML = "";
+    const e = list.filter(i => i.lvl === "ERROR").length, w = list.filter(i => i.lvl === "WARN").length;
+    if (t === "Review" && result) {
+      if (result.errors) b.append(el("span", { class: "badge b-err" }, result.errors));
+      if (result.warnings) b.append(el("span", { class: "badge b-warn" }, result.warnings));
+    } else {
+      if (e) b.append(el("span", { class: "badge b-err" }, e));
+      if (w) b.append(el("span", { class: "badge b-warn" }, w));
+      if (state.tables[t]) b.append(el("span", { class: "badge b-n" }, state.tables[t].length));
+    }
+  }
+  for (const r of document.querySelectorAll("[data-rowid]")) r.classList.remove("row-err", "row-warn");
+  for (const i of (by[current] || [])) {
+    if (!i.row || i.lvl === "INFO") continue;
+    const r = document.querySelector(`[data-rowid="${current}-${i.row}"]`);
+    if (r) {
+      if (i.lvl === "ERROR") { r.classList.remove("row-warn"); r.classList.add("row-err"); }
+      else if (!r.classList.contains("row-err")) r.classList.add("row-warn");
+    }
+  }
+  const box = $("#page-issues");
+  if (box) { box.replaceWith(issueList(current === "Review" ? null : current)); }
+  if (current === "Review") renderReviewBody();
+}
+function issueList(sheet) {
+  const by = issuesBySheet();
+  const list = sheet ? (by[sheet] || []) : Object.values(by).flat();
+  const order = { ERROR: 0, WARN: 1, INFO: 2 };
+  list.sort((a, b) => order[a.lvl] - order[b.lvl]);
+  const ul = el("ul", { class: "issues", id: "page-issues" });
+  for (const i of list) {
+    ul.append(el("li", { onclick: () => jump(i.sheet, i.row) },
+      el("span", { class: "lvl lvl-" + i.lvl }, i.lvl), sheet ? "" : el("b", {}, i.where + ": "), i.msg));
+  }
+  return ul;
+}
+function jump(sheet, row) {
+  if (!schema.tables[sheet] && sheet !== "Study") return;
+  go(sheet);
+  if (row) { const r = document.querySelector(`[data-rowid="${sheet}-${row}"]`); if (r) r.scrollIntoView({ block: "center" }); }
+}
+
+// ------------------------------------------------------------------ navigation
+function renderNav() {
+  const nav = $("#nav"); nav.innerHTML = "";
+  for (const t of TABS) {
+    if (t === "-") { nav.append(el("div", { class: "sep" })); continue; }
+    nav.append(el("a", { "data-tab": t[0], class: t[0] === current ? "active" : "", onclick: () => go(t[0]) },
+      el("span", { class: "lbl" }, t[1]), el("span", { class: "badges" })));
+  }
+}
+function go(tab) {
+  current = tab;
+  for (const a of document.querySelectorAll("nav a[data-tab]")) a.classList.toggle("active", a.dataset.tab === tab);
+  const main = $("#main"); main.innerHTML = ""; main.scrollTop = 0;
+  const def = TABS.find(t => t !== "-" && t[0] === tab);
+  main.append(el("h2", {}, def[1]));
+  if (def[2]) main.append(el("p", { class: "lead" }, def[2]));
+  if (tab === "Study") renderStudy(main);
+  else if (tab === "Review") renderReview(main);
+  else if (CARD_SHEETS.has(tab)) renderCards(main, tab);
+  else renderGrid(main, tab);
+  decorate();
+}
+
+// ------------------------------------------------------------------ widgets
+function textWidget(value, onchange, { wrap = false, rows = 3, placeholder = "" } = {}) {
+  const w = wrap ? el("textarea", { rows, placeholder }) : el("input", { type: "text", placeholder });
+  w.value = value || ""; w.addEventListener("input", () => onchange(w.value)); return w;
+}
+function selectWidget(value, options, onchange, { blank = true } = {}) {
+  const s = el("select");
+  if (blank) s.append(el("option", { value: "" }, "—"));
+  const opts = options.slice(); if (value && !opts.includes(value)) opts.push(value);
+  for (const o of opts) s.append(el("option", { value: o }, o + (options.includes(o) ? "" : "  (undefined!)")));
+  s.value = value || ""; s.addEventListener("change", () => onchange(s.value)); return s;
+}
+function multiWidget(value, options, onchange, { custom = true, labels = {} } = {}) {
+  const vals = splitMulti(value); const box = el("div", { class: "chips" });
+  const emit = () => onchange(vals.join("; "));
+  for (const o of [...new Set([...options, ...vals])]) {
+    const cb = el("input", { type: "checkbox" }); cb.checked = vals.includes(o);
+    cb.addEventListener("change", () => { const i = vals.indexOf(o); if (cb.checked && i < 0) vals.push(o); if (!cb.checked && i >= 0) vals.splice(i, 1); emit(); });
+    box.append(el("label", { title: labels[o] || "" }, cb, (labels[o] ? `${o} · ${labels[o]}` : o) + (options.includes(o) ? "" : " (?)")));
+  }
+  if (custom) {
+    const inp = el("input", { type: "text", placeholder: "other…" });
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter" && inp.value.trim()) { vals.push(inp.value.trim()); emit(); go(current); } });
+    box.append(inp);
+  }
+  return box;
+}
+// live ontology lookup (EBI OLS4 - CORS enabled)
+function lookupWidget(value, ontology, onpick, onchange) {
+  const wrap = el("div", { class: "lookup" });
+  const inp = el("input", { type: "text", placeholder: "type to search " + ontology.toUpperCase() + "…" }); inp.value = value || "";
+  const res = el("div", { class: "lookup-results", hidden: true });
+  let t = null;
+  inp.addEventListener("input", () => {
+    onchange(inp.value); clearTimeout(t);
+    const q = inp.value.trim(); if (q.length < 3) { res.hidden = true; return; }
+    t = setTimeout(async () => {
+      try {
+        const url = `https://www.ebi.ac.uk/ols4/api/search?q=${encodeURIComponent(q)}&ontology=${ontology}&rows=8&fieldList=label,obo_id,short_form`;
+        const docs = (await (await fetch(url)).json()).response.docs;
+        res.innerHTML = ""; res.hidden = !docs.length;
+        for (const d of docs) res.append(el("div", { onmousedown: (e) => { e.preventDefault(); inp.value = d.label; res.hidden = true; onpick(d); } },
+          d.label, " ", el("small", {}, d.obo_id)));
+      } catch (e) { res.hidden = true; }
+    }, 300);
+  });
+  inp.addEventListener("blur", () => setTimeout(() => res.hidden = true, 150));
+  wrap.append(inp, res); return wrap;
+}
+function cellWidget(sheet, row, col) {
+  const set = (v) => { row[col.header] = v; changed(); };
+  if (col.ref) return selectWidget(row[col.header], refOptions(col.ref), set);
+  if (sheet === "Authors" && col.header === "Affiliations") {
+    const labels = Object.fromEntries(state.tables.Organisations.map(o => [o.Key, o.Name]));
+    return multiWidget(row[col.header], refOptions("Organisations"), set, { custom: false, labels });
+  }
+  if (sheet === "Authors" && col.header === "Roles") return multiWidget(row[col.header], ROLE_OPTIONS, set);
+  if (sheet === "Biosamples" && col.header === "Organism")
+    return lookupWidget(row.Organism, "ncbitaxon", (d) => { row.Organism = d.label; row["NCBITaxon ID"] = (d.short_form || "").replace("NCBITaxon_", ""); changed(); go(current); }, set);
+  if (sheet === "Acquisitions" && col.header === "Imaging method")
+    return lookupWidget(row["Imaging method"], "fbbi", (d) => { row["Imaging method"] = d.label; row["Imaging method term ID"] = d.short_form; row["Imaging method ontology"] = "fbbi"; changed(); go(current); }, set);
+  return textWidget(row[col.header], set, { wrap: col.wrap, rows: CARD_SHEETS.has(sheet) ? 4 : 2 });
+}
+function blankRow(sheet) {
+  const r = {};
+  if (sheet === "Specimens") for (const [c, ref] of [["Protocol", "Protocols"], ["Image acquisition", "Acquisitions"], ["Study component", "StudyComponents"]]) {
+    const o = refOptions(ref); if (o.length === 1) r[c] = o[0];
+  }
+  return r;
+}
+const cloneRow = (r) => Object.fromEntries(Object.entries(r).filter(([k]) => !k.startsWith("_")));
+
+// ------------------------------------------------------------------ pages
+function renderStudy(main) {
+  main.append(el("details", { class: "guide", open: !(state.study.Title || "").trim() },
+    el("summary", {}, el("b", {}, "How to use this form")),
+    el("ol", {},
+      el("li", {}, "Work through the pages in the menu from top to bottom. Required fields are marked with an orange asterisk; every field and column explains what it needs."),
+      el("li", {}, "The pages below the first line describe the biology and the imaging. Define biosamples, sample preparation, image acquisition, image analysis and study components first; then list the specimens, which refer to those entries by name."),
+      el("li", {}, "Problems are listed at the top of each page and counted in the menu: red must be fixed before submission, orange should be checked."),
+      el("li", {}, "On 'Review & export', download the PageTab TSV and submit it to the BioImage Archive."),
+      el("li", {}, "Your entries are kept in this browser automatically. 'Save draft' keeps a copy you can reopen or send to a colleague; 'Export Excel' continues the same submission in a spreadsheet."))));
+  main.append(issueList("Study"));
+  const adv = el("details", {}, el("summary", {}, "Submission settings (accession, template, DOI)"));
+  for (const f of schema.study) {
+    if (f.name.startsWith("_")) continue;
+    const set = (v) => { state.study[f.name] = v; changed(); };
+    let w;
+    if (f.name === "License") w = selectWidget(state.study.License, schema.licenses, set);
+    else if (f.name === "Release date") { w = el("input", { type: "date" }); w.value = state.study[f.name] || ""; w.addEventListener("input", () => set(w.value)); }
+    else w = textWidget(state.study[f.name], set, { wrap: ["Description", "Funding statement", "Acknowledgements", "Keywords", "Title"].includes(f.name), rows: f.name === "Description" ? 8 : (f.name === "Title" ? 2 : 3) });
+    const box = el("div", { class: "field" }, el("label", { class: f.required ? "req" : "" }, f.name), w, f.help ? el("div", { class: "help" }, f.help) : null);
+    (ADVANCED_STUDY.has(f.name) ? adv : main).append(box);
+  }
+  main.append(adv);
+}
+
+function renderGrid(main, sheet) {
+  main.append(issueList(sheet));
+  const rows = state.tables[sheet], cols = columns(sheet);
+  const tb = el("div", { class: "toolbar" },
+    el("button", { onclick: () => { rows.push(blankRow(sheet)); changed(); go(sheet); } }, "+ Add row"));
+  if (sheet === "Biosamples") tb.append(el("button", { onclick: () => {
+    const name = prompt("Label of the new descriptor column. It is written before the colon in each sample's description line (include the unit if there is one):"); if (!name) return;
+    const h = schema.desc_prefix + name.trim(); if (!state.desc_labels.includes(h)) state.desc_labels.push(h); changed(); go(sheet);
+  } }, "+ Descriptor column"));
+  if (sheet === "Specimens") specimenTools(main, tb);
+  main.append(tb);
+
+  const thead = el("tr", {}, el("th", {}, "#"));
+  for (const c of cols) {
+    const label = c.desc ? c.header.slice(schema.desc_prefix.length) : c.header;
+    const th = el("th", { title: c.help || "" }, el("span", { class: c.required ? "req" : "" }, label),
+      c.help ? el("div", { class: "colhelp" }, c.help) : null);
+    if (c.desc) th.append(el("button", { class: "x", title: "remove column", onclick: () => {
+      if (!confirm(`Remove descriptor column '${label}' and its values?`)) return;
+      state.desc_labels = state.desc_labels.filter(x => x !== c.header); rows.forEach(r => delete r[c.header]); changed(); go(sheet);
+    } }, "×"));
+    thead.append(th);
+  }
+  thead.append(el("th", {}, ""));
+  const tbody = el("tbody");
+  rows.forEach((r, i) => {
+    const tr = el("tr", { "data-rowid": `${sheet}-${i + 1}` }, el("td", { class: "num" }, i + 1));
+    for (const c of cols) { const w = cellWidget(sheet, r, c); if (w.style) w.style.minWidth = Math.max(110, (c.width || 16) * 7.5) + "px"; tr.append(el("td", {}, w)); }
+    tr.append(el("td", { style: "white-space:nowrap" },
+      el("button", { class: "x", title: "duplicate row", onclick: () => { rows.splice(i + 1, 0, cloneRow(r)); changed(); go(sheet); } }, "⧉"),
+      el("button", { class: "x", title: "delete row", onclick: () => { rows.splice(i, 1); changed(); go(sheet); } }, "×")));
+    tbody.append(tr);
+  });
+  main.append(el("div", { class: "gridwrap" }, el("table", { class: "grid" }, el("thead", {}, thead), tbody)));
+  if (!rows.length) main.append(el("p", { class: "help" }, "No rows yet. Click “+ Add row”."));
+}
+
+function specimenTools(main, tb) {
+  const rows = state.tables.Specimens;
+  const panel = el("div", { class: "panel", hidden: true },
+    el("div", { class: "help" }, "Paste specimen titles, one per line. Sample preparation, image acquisition and study component are filled in automatically when only one of each is defined."));
+  const ta = el("textarea", { rows: 6 }); panel.append(ta, el("div", { class: "toolbar" }, el("button", { class: "primary", onclick: () => {
+    for (const t of ta.value.split("\n").map(s => s.trim()).filter(Boolean)) rows.push(Object.assign(blankRow("Specimens"), { "Specimen title": t }));
+    changed(); go("Specimens");
+  } }, "Add these specimens")));
+  tb.append(el("button", { onclick: () => panel.hidden = !panel.hidden }, "+ Paste many…"));
+  tb.append(el("button", { title: "Fill empty Biosample cells for specimens whose title begins with a biosample title followed by '-', '_', '.' or a space", onclick: () => {
+    const bios = refOptions("Biosamples").sort((a, b) => b.length - a.length); let n = 0;
+    for (const r of rows) if (!r.Biosample) { const b = bios.find(b => new RegExp("^" + b.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "[-_ .]").test(r["Specimen title"] || "")); if (b) { r.Biosample = b; n++; } }
+    changed(); go("Specimens"); setStatus(`Auto-assigned biosample for ${n} row(s)`);
+  } }, "Auto-assign biosample from title"));
+  // bulk set
+  const refCols = columns("Specimens").filter(c => c.ref);
+  const colSel = el("select"); refCols.forEach(c => colSel.append(el("option", { value: c.header }, c.header)));
+  const valSel = el("select");
+  const fillVals = () => { valSel.innerHTML = ""; const c = refCols.find(c => c.header === colSel.value); valSel.append(el("option", { value: "" }, "—")); refOptions(c.ref).forEach(o => valSel.append(el("option", { value: o }, o))); };
+  colSel.addEventListener("change", fillVals); fillVals();
+  const scope = el("select", {}, el("option", { value: "empty" }, "empty cells"), el("option", { value: "all" }, "all rows"));
+  tb.append(el("span", { class: "help" }, "Bulk set"), colSel, el("span", { class: "help" }, "="), valSel, el("span", { class: "help" }, "for"), scope,
+    el("button", { onclick: () => { for (const r of rows) if (scope.value === "all" || !r[colSel.value]) r[colSel.value] = valSel.value; changed(); go("Specimens"); } }, "Apply"));
+  main.append(panel);
+}
+
+function renderCards(main, sheet) {
+  main.append(issueList(sheet));
+  const rows = state.tables[sheet], cols = columns(sheet);
+  rows.forEach((r, i) => {
+    const card = el("div", { class: "card", "data-rowid": `${sheet}-${i + 1}` },
+      el("div", { class: "card-head" }, el("span", {}, `#${i + 1}`), el("span", {},
+        el("button", { class: "x", title: "duplicate", onclick: () => { rows.splice(i + 1, 0, cloneRow(r)); changed(); go(sheet); } }, "⧉ duplicate"),
+        el("button", { class: "x", title: "delete", onclick: () => { if (confirm("Delete this entry?")) { rows.splice(i, 1); changed(); go(sheet); } } }, "× delete"))));
+    for (const c of cols) card.append(el("div", { class: "field" }, el("label", { class: c.required ? "req" : "" }, c.header), cellWidget(sheet, r, c), c.help ? el("div", { class: "help" }, c.help) : null));
+    main.append(card);
+  });
+  main.append(el("button", { onclick: () => { rows.push({}); changed(); go(sheet); } }, "+ Add"));
+}
+
+function renderReview(main) {
+  const keep = el("input", { type: "checkbox", id: "keep-empty" });
+  main.append(el("div", { class: "toolbar" }, el("label", {}, keep, " keep empty Publication / Funding sections"),
+    el("button", { onclick: () => validateNow({ keep_empty: keep.checked }) }, "Re-validate")));
+  main.append(el("div", { id: "review-body" }));
+  renderReviewBody();
+}
+function renderReviewBody() {
+  const body = $("#review-body"); if (!body || !result) return;
+  body.innerHTML = "";
+  body.append(el("div", { class: "summary" },
+    el("div", {}, el("b", { style: "color:var(--err)" }, result.errors), "errors"),
+    el("div", {}, el("b", { style: "color:var(--warn)" }, result.warnings), "warnings"),
+    el("div", {}, el("b", {}, result.specimens ?? 0), "specimens"),
+    el("div", {}, el("b", {}, result.associations ?? 0), "associations"),
+    el("div", {}, el("b", {}, result.blocks ?? 0), "PageTab blocks")));
+  body.append(el("h3", {}, "Issues"), issueList(null));
+  body.append(el("h3", {}, "PageTab preview"), el("pre", { class: "tsv" }, result.tsv || ""));
+  body.append(el("footer", { class: "note" },
+    "Everything runs in this browser tab (Python via Pyodide); data are kept in this browser's local storage and in files you save. ",
+    "Ontology search queries EBI OLS4 with the search text only. ",
+    "Upload the TSV in the BioStudies submission tool or via its API; for an existing accession this UPDATES that submission - coordinate with the BioImage Archive curators first."));
+}
+
+// ------------------------------------------------------------------ header actions
+function loadInto(d, notes) {
+  state = normalise(d); saveLocal(); renderNav(); go("Review"); validateNow();
+  if (notes && notes.length) alert("Imported with notes:\n\n" + notes.join("\n"));
+}
+$("#btn-new").addEventListener("click", () => { if (confirm("Start a new, empty submission? (Save a draft first if you need the current one.)")) { state = emptyState(); saveLocal(); go("Study"); validateNow(); } });
+$("#in-tsv").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; if (!f) return; e.target.value = "";
+  try { const d = JSON.parse(callPy("api_import_tsv", await f.text())); loadInto(d, d.notes); setStatus(`Imported ${f.name}`); }
+  catch (err) { alert("Could not import: " + err); }
+});
+$("#in-json").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; if (!f) return; e.target.value = "";
+  try { loadInto(JSON.parse(await f.text())); setStatus(`Opened ${f.name}`); } catch (err) { alert("Not a valid draft: " + err); }
+});
+$("#in-xlsx").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; if (!f) return; e.target.value = "";
+  try {
+    await ensureXlsx(); py.FS.writeFile("/tmp/in.xlsx", new Uint8Array(await f.arrayBuffer()));
+    loadInto(JSON.parse(callPy("api_import_xlsx", "/tmp/in.xlsx"))); setStatus(`Opened ${f.name}`);
+  } catch (err) { alert("Could not open workbook: " + err); setStatus("Excel import failed"); }
+});
+const baseName = () => (state.study.Accession || "submission").replace(/[^A-Za-z0-9._-]/g, "_");
+$("#btn-save").addEventListener("click", () => download(baseName() + ".draft.json", JSON.stringify({ format: "bia-kit-draft", version: 1, ...JSON.parse(payload()) }, null, 1), "application/json"));
+$("#btn-xlsx").addEventListener("click", async () => {
+  try { await ensureXlsx(); callPy("api_export_xlsx", payload(), "/tmp/out.xlsx");
+    download(baseName() + ".xlsx", py.FS.readFile("/tmp/out.xlsx"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); setStatus("Excel exported"); }
+  catch (err) { alert("Could not export workbook: " + err); }
+});
+$("#btn-tsv").addEventListener("click", () => {
+  const keep = $("#keep-empty"); const r = validateNow(keep && keep.checked ? { keep_empty: true } : {});
+  if (!r) return;
+  if (r.errors && !confirm(`There are ${r.errors} error(s). The BioImage Archive will likely reject this. Download anyway?`)) { go("Review"); return; }
+  download(baseName() + ".pagetab.tsv", r.tsv, "text/tab-separated-values");
+});
+function renderSiteLinks() {
+  const box = $("#site-links"); if (!SITE_LINKS) { box.remove(); return; }
+  if (SITE_LINKS.guide) box.append(el("a", { href: SITE_LINKS.guide, target: "_blank", rel: "noopener" }, "Guide"));
+  if (SITE_LINKS.template) box.append(el("a", { href: SITE_LINKS.template, download: "" , title: "Blank Excel template with explanations" }, "Excel template"));
+  if (SITE_LINKS.example) box.append(el("a", { title: "Load a fictional, filled-in example submission into the form", onclick: async () => {
+    if (!py) return;
+    const filled = Object.values(state.tables).some(t => t.length) || (state.study.Title || "").trim();
+    if (filled && !confirm("Replace the current entries with the example? (Save a draft first if you need them.)")) return;
+    try {
+      const text = await (await fetch(SITE_LINKS.example)).text();
+      const d = JSON.parse(callPy("api_import_tsv", text)); loadInto(d, d.notes); setStatus("Loaded the fictional example");
+    } catch (err) { alert("Could not load the example: " + err); }
+  } }, "Load example"));
+}
+window.addEventListener("beforeunload", saveLocal);
+renderSiteLinks();
+boot();
+</script>
+</body>
+</html>

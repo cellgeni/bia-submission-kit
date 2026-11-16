@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# build output (the website is built by GitHub Actions; see .github/workflows)
+dist/
+_site/
+out/
+
+# generated workbooks: produce them with `bia_kit.py template` or download them from the website
+*.xlsx
+~$*
+
+# never commit real submission data; keep it outside the repository
+private/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

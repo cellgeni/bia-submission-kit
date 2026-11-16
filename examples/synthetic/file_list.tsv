@@ -1,0 +1,9 @@
+Files	biosample	specimen	content
+MOUSE-01-SL01/MOUSE-01-SL01_volume.ome.zarr.zip	MOUSE-01	MOUSE-01-SL01	stitched volume
+MOUSE-01-SL01/MOUSE-01-SL01_nuclei_masks.ome.zarr.zip	MOUSE-01	MOUSE-01-SL01	segmentation masks
+MOUSE-01-SL02/MOUSE-01-SL02_volume.ome.zarr.zip	MOUSE-01	MOUSE-01-SL02	stitched volume
+MOUSE-01-SL02/MOUSE-01-SL02_nuclei_masks.ome.zarr.zip	MOUSE-01	MOUSE-01-SL02	segmentation masks
+MOUSE-02-SL01/MOUSE-02-SL01_volume.ome.zarr.zip	MOUSE-02	MOUSE-02-SL01	stitched volume
+MOUSE-02-SL01/MOUSE-02-SL01_nuclei_masks.ome.zarr.zip	MOUSE-02	MOUSE-02-SL01	segmentation masks
+MOUSE-02-SL02/MOUSE-02-SL02_volume.ome.zarr.zip	MOUSE-02	MOUSE-02-SL02	stitched volume
+MOUSE-02-SL02/MOUSE-02-SL02_nuclei_masks.ome.zarr.zip	MOUSE-02	MOUSE-02-SL02	segmentation masks
